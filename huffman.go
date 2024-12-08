@@ -1,56 +1,67 @@
-package gocompress
+package main
 
 import (
-	"container/heap"
-	"io"
+	"fmt"
+	"sort"
+	"strings"
 )
 
 type HuffmanCodec struct {
-	frqMap map[rune]int
-	tree   *HuffmanNode
+	frequencyTable map[rune]int
+	codeTable      map[rune]string
+	tree           *HuffmanNode
 }
 
-func FromReader(isCompressed bool, r io.Reader) *HuffmanCodec {
+func FromReader(isCompressed bool, s string) *HuffmanCodec {
 	encoder := new(HuffmanCodec)
+	fmt.Printf("Huffman input: %s", s)
 	if isCompressed {
 	} else {
-		encoder.constructFrequencyMap(r)
+		encoder.constructFrequencyMap(s)
+		fmt.Println(encoder.frequencyTable)
+		encoder.createTree()
+		var sb strings.Builder
+		createCodeTable(encoder.tree, encoder.codeTable, sb)
+		fmt.Println(encoder.codeTable)
 	}
 	return encoder
 }
-func (c *HuffmanCodec) constructFrequencyMap(r io.Reader) {
-	c.frqMap = make(map[rune]int)
-	var b []byte
-	_, err := r.Read(b)
-	if err != nil {
-		panic(err)
-	}
-	for _, r := range string(b) {
-		prv := c.frqMap[r]
-		c.frqMap[r] = prv + 1
+func (c *HuffmanCodec) constructFrequencyMap(s string) {
+	c.frequencyTable = make(map[rune]int)
+	c.codeTable = make(map[rune]string)
+	for _, r := range s {
+		prv := c.frequencyTable[r]
+		c.frequencyTable[r] = prv + 1
 	}
 }
 func (c *HuffmanCodec) createTree() {
 	// init queue
 	pq := PriorityQueue{}
-	heap.Init(&pq)
+	// heap.Init(&pq)
 	// get the total so i can calculate probabilities
 	sum := 0
-	for _, v := range c.frqMap {
+	for _, v := range c.frequencyTable {
 		sum += v
 	}
-	for k, v := range c.frqMap {
+	fmt.Println(sum)
+	for k, v := range c.frequencyTable {
 		pq.Push(
-			HuffmanNode{
-				symbol: k,
-				prb:    float32(v) / float32(sum),
+			&Item{
+				Node: &HuffmanNode{
+					symbol: k,
+					prb:    float32(v) / float32(sum),
+				},
 			},
 		)
 	}
 	// create tree
 	for pq.Len() > 1 {
-		a := pq.Pop().(Item).Node
-		b := pq.Pop().(Item).Node
+		sort.Slice(pq, func(i, j int) bool {
+			return pq[i].Node.prb > pq[j].Node.prb
+		})
+		a := pq.Pop().(*Item).Node
+		b := pq.Pop().(*Item).Node
+		fmt.Printf("%c %.06f %c %.06f\n", a.symbol, a.prb, b.symbol, b.prb)
 		pq.Push(
 			&Item{
 				Node: &HuffmanNode{
@@ -63,9 +74,30 @@ func (c *HuffmanCodec) createTree() {
 		)
 	}
 	if pq.Len() == 1 {
-		n := pq.Pop().(Item)
+		n := pq.Pop().(*Item)
 		c.tree = n.Node
 	} else {
-		panic("Huffman hdap is empty")
+		panic("Huffman map is empty")
+	}
+}
+func createCodeTable(node *HuffmanNode, m map[rune]string, sb strings.Builder) {
+	if node == nil {
+		return
+	}
+	if node.symbol != '*' {
+		m[node.symbol] = sb.String()
+		return
+	}
+	if node.left != nil {
+		var left strings.Builder
+		left.WriteString(sb.String())
+		left.WriteRune('0')
+		createCodeTable(node.left, m, left)
+	}
+	if node.right != nil {
+		var right strings.Builder
+		right.WriteString(sb.String())
+		right.WriteRune('1')
+		createCodeTable(node.right, m, right)
 	}
 }

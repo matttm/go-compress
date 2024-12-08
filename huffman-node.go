@@ -1,4 +1,4 @@
-package gocompress
+package main
 
 import ()
 
@@ -23,7 +23,7 @@ func (pq PriorityQueue) Len() int { return len(pq) }
 func (pq PriorityQueue) Less(i, j int) bool {
 	// We want Pop to give us the lowest based on expiration number as the priority
 	// The lower the expiry, the higher the priority
-	return pq[i].Node.prb < pq[j].Node.prb
+	return pq[i].Node.prb > pq[j].Node.prb
 }
 
 // We just implement the pre-defined function in interface of heap.
