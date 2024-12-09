@@ -4,8 +4,11 @@ import (
 	"bufio"
 	"os"
 	"strings"
+
+	"github.com/matttm/go-compress/internal/huffman"
 )
 
+// Usage: cat sample | ./gocompress
 func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -18,5 +21,5 @@ func main() {
 		}
 		sb.WriteString(line)
 	}
-	FromReader(false, sb.String())
+	huffman.FromReader(false, sb.String())
 }
