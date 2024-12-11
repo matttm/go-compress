@@ -1,4 +1,4 @@
-# spoticli
+# go-compress
 
 Development: Active
 
