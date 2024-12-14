@@ -21,5 +21,5 @@ func main() {
 		}
 		sb.WriteString(line)
 	}
-	huffman.FromReader(false, sb.String())
+	huffman.FromDecodedText(false, sb.String())
 }

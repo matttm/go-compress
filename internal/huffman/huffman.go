@@ -12,7 +12,27 @@ type HuffmanCodec struct {
 	tree           *HuffmanNode
 }
 
-func FromReader(isCompressed bool, s string) *HuffmanCodec {
+func (c *HuffmanCodec) Encode(s string) {
+	encoded := []byte{}
+	for _, r := range s {
+		var b byte = 0
+		var bitPos uint8 = 7
+		code := c.codeTable[r]
+		for _, c := range code {
+			if c == '1' {
+				// set bit
+				b |= 1 << bitPos
+			} else {
+				// unset bit
+				b &= ^(1 << bitPos)
+			}
+			bitPos -= 1
+			resetBytePos(&bitPos)
+		}
+	}
+}
+
+func FromDecodedText(isCompressed bool, s string) *HuffmanCodec {
 	encoder := new(HuffmanCodec)
 	fmt.Printf("Huffman input: %s", s)
 	if isCompressed {
