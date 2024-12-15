@@ -12,7 +12,7 @@ type HuffmanCodec struct {
 	tree           *HuffmanNode
 }
 
-func (c *HuffmanCodec) Encode(s string) {
+func (c *HuffmanCodec) encode(s string) []byte {
 	encoded := []byte{}
 	for _, r := range s {
 		var b byte = 0
@@ -27,9 +27,10 @@ func (c *HuffmanCodec) Encode(s string) {
 				b &= ^(1 << bitPos)
 			}
 			bitPos -= 1
-			resetBytePos(&bitPos)
+			resetBytePos(&bitPos, b, encoded)
 		}
 	}
+	return encoded
 }
 
 func FromDecodedText(isCompressed bool, s string) *HuffmanCodec {
@@ -44,6 +45,8 @@ func FromDecodedText(isCompressed bool, s string) *HuffmanCodec {
 		createCodeTable(encoder.tree, encoder.codeTable, sb)
 		fmt.Println(encoder.codeTable)
 	}
+	bytes := encoder.encode(s)
+	fmt.Println(bytes)
 	return encoder
 }
 func (c *HuffmanCodec) constructFrequencyMap(s string) {
@@ -81,7 +84,7 @@ func (c *HuffmanCodec) createTree() {
 		})
 		a := pq.Pop().(*Item).Node
 		b := pq.Pop().(*Item).Node
-		fmt.Printf("%c %.06f %c %.06f\n", a.symbol, a.prb, b.symbol, b.prb)
+		//  fmt.Printf("%c %.06f %c %.06f\n", a.symbol, a.prb, b.symbol, b.prb)
 		pq.Push(
 			&Item{
 				Node: &HuffmanNode{
@@ -119,5 +122,12 @@ func createCodeTable(node *HuffmanNode, m map[rune]string, sb strings.Builder) {
 		right.WriteString(sb.String())
 		right.WriteRune('1')
 		createCodeTable(node.right, m, right)
+	}
+}
+
+func resetBytePos(bitPos *uint8, b uint8, encoded []byte) {
+	if *bitPos > 8 {
+		*bitPos = 7
+		encoded = append(encoded, b)
 	}
 }
