@@ -17,6 +17,14 @@ func Test_ShouldEncode(t *testing.T) {
 			input:    []bool{true},
 			expected: []byte{0b10000000},
 		},
+		{
+			input:    []bool{true, false, false, true},
+			expected: []byte{0b10010000},
+		},
+		{
+			input:    []bool{true, false, false, true, true, false, false, true},
+			expected: []byte{0b10011001},
+		},
 	}
 	for _, _t := range tests {
 		storage := []byte{}
@@ -25,6 +33,7 @@ func Test_ShouldEncode(t *testing.T) {
 			bw.WriteBit(_bool)
 		}
 		yield := bw.YieldSlice()
-		assert.Equal(t, yield[0], _t.expected[0], "swcjwdin")
+		assert.Equal(t, len(yield), 1, "")
+		assert.Equal(t, yield[0], _t.expected[0], "should pad to byte boundary")
 	}
 }

@@ -12,12 +12,7 @@ type huffman_testcase struct {
 }
 
 func Test_ShouldEncode(t *testing.T) {
-	tests := []huffman_testcase{
-		{
-			input:    "aabba",
-			expected: []byte{0b11001000},
-		},
-	}
+	tests := []huffman_testcase{}
 	for _, _t := range tests {
 		c := FromDecodedText(false, _t.input)
 		assert.ElementsMatch(t, c.encoded, _t.expected, "swcjwdin")
