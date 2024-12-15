@@ -4,49 +4,42 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+
+	bitwriter "github.com/matttm/go-compress/internal/bit-writer"
 )
 
 type HuffmanCodec struct {
 	frequencyTable map[rune]int
 	codeTable      map[rune]string
 	tree           *HuffmanNode
+	encoded        []byte
 }
 
 func (c *HuffmanCodec) encode(s string) []byte {
 	encoded := []byte{}
+	bw := bitwriter.WithSlice(encoded)
 	for _, r := range s {
-		var b byte = 0
-		var bitPos uint8 = 7
 		code := c.codeTable[r]
 		for _, c := range code {
-			if c == '1' {
-				// set bit
-				b |= 1 << bitPos
-			} else {
-				// unset bit
-				b &= ^(1 << bitPos)
-			}
-			bitPos -= 1
-			resetBytePos(&bitPos, b, encoded)
+			bw.WriteBit(c == '1')
 		}
 	}
-	return encoded
+	return bw.YieldSlice()
 }
 
 func FromDecodedText(isCompressed bool, s string) *HuffmanCodec {
 	encoder := new(HuffmanCodec)
-	fmt.Printf("Huffman input: %s", s)
 	if isCompressed {
 	} else {
 		encoder.constructFrequencyMap(s)
-		fmt.Println(encoder.frequencyTable)
 		encoder.createTree()
 		var sb strings.Builder
 		createCodeTable(encoder.tree, encoder.codeTable, sb)
-		fmt.Println(encoder.codeTable)
 	}
 	bytes := encoder.encode(s)
-	fmt.Println(bytes)
+	encoder.encoded = bytes
+	fmt.Println(encoder.codeTable)
+	fmt.Printf("%08b\n", bytes)
 	return encoder
 }
 func (c *HuffmanCodec) constructFrequencyMap(s string) {
