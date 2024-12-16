@@ -29,7 +29,6 @@ func (bw *BitWriter) WriteBit(set bool) {
 	} else {
 		bw.current <<= 1
 	}
-	fmt.Printf("%08b\n", bw.current)
 
 }
 
