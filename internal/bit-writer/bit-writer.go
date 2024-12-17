@@ -1,7 +1,5 @@
 package bitwriter
 
-import "fmt"
-
 type BitWriter struct {
 	storage  []byte
 	current  uint8
