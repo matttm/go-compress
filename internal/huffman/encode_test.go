@@ -27,7 +27,7 @@ func Test_ShouldEncode(t *testing.T) {
 		},
 	}
 	for _, _t := range tests {
-		c := FromDecodedText(false, _t.input)
+		c := FromDecodedText(_t.input)
 		assert.ElementsMatch(t, c.encoded, _t.expected, "swcjwdin")
 	}
 }

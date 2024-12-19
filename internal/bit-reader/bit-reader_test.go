@@ -26,6 +26,10 @@ func Test_ShouldReadSingleBits(t *testing.T) {
 			input:    []byte{0b11000001},
 			expected: []bool{true, true, false, false, false, false, false, true},
 		},
+		{
+			input:    []byte{0b11000001, 0b11000001},
+			expected: []bool{true, true, false, false, false, false, false, true, true, true, false, false, false, false, false, true},
+		},
 	}
 	for _, _t := range tests {
 		storage := _t.input

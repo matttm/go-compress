@@ -2,8 +2,6 @@ package bitreader
 
 import "fmt"
 
-const MAGIC_NUMBER = 0x80F0
-
 type BitReader struct {
 	encoded  []byte
 	index    uint64 // index of current byte being examined in encoded
@@ -20,7 +18,7 @@ func FromSlice(s []byte) *BitReader {
 	return br
 }
 func (br *BitReader) ReadBit() (bool, error) {
-	if br.index == uint64(len(br.encoded)) {
+	if br.IsEOF() {
 		return false, fmt.Errorf("Error: Index out-of-bounds")
 	} else {
 		if br.bitCount == 8 {
@@ -36,4 +34,8 @@ func (br *BitReader) ReadBit() (bool, error) {
 			return set == 1, nil
 		}
 	}
+}
+
+func (br *BitReader) IsEOF() bool {
+	return br.index == uint64(len(br.encoded))
 }
