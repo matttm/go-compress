@@ -30,6 +30,19 @@ func FromDecodedText(s string) *HuffmanCodec {
 	encoder.encoded = bytes
 	//	fmt.Println(encoder.encodingTable)
 	//	fmt.Printf("%08b\n", bytes)
+	serialized := serializeTree(encoder.tree)
+	fmt.Print(encoder.encodingTable)
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Print(serialized)
+	fmt.Println("")
+	fmt.Println("")
+	encoder.tree = deserializeTree(serialized)
+	sb.Reset()
+	encoder.encodingTable = make(map[rune]string)
+	createCodeTable(encoder.tree, encoder.encodingTable, sb)
+	fmt.Print(encoder.encodingTable)
+	fmt.Println("")
 	return encoder
 }
 func (c *HuffmanCodec) constructFrequencyMap(s string) {
@@ -113,16 +126,17 @@ func serializeTree(n *HuffmanNode) []byte {
 	var serialize func(*HuffmanNode, *[]byte, *int)
 	serialize = func(_n *HuffmanNode, _b *[]byte, count *int) {
 		if _n == nil {
+			*_b = append(*_b, NULL)
 			return
 		}
 		if _n.symbol != '*' {
-			*_b = append(*_b, LEAF...)
 			*_b = append(*_b, byte(_n.symbol))
 			*count += 1
 		} else {
-			*_b = append(*_b, INTER...)
+			*_b = append(*_b, 0)
 			serialize(_n.left, _b, count)
-			serialize(_n.left, _b, count)
+			*_b = append(*_b, 1)
+			serialize(_n.right, _b, count)
 		}
 	}
 	serialize(n, &b, &nodeCount)

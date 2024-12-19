@@ -1,8 +1,7 @@
 package huffman
 
 var MAGIC_NUMBER = []byte{0x80, 0xF0}
-var LEAF = []byte{0x80, 0xF0}
-var INTER = []byte{0x80, 0xF0}
+var NULL byte = '@'
 
 type HuffmanCodec struct {
 	frequencyTable map[rune]int

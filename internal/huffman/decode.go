@@ -33,20 +33,34 @@ func (c *HuffmanCodec) decode() {
 	}
 	c.decoded = decodedBldr.String()
 }
-func deserializeTree(data []byte) *HuffmanNode {
-	if !bytes.HasPrefix(data, MAGIC_NUMBER) {
+func deserializeTree(_data []byte) *HuffmanNode {
+	if !bytes.HasPrefix(_data, MAGIC_NUMBER) {
 	}
-	n := new(HuffmanNode)
-	for _, d := range data {
+	// count := data[0]
+	// data[0:2] is magic
+	// data[2:3] is count
+	_data = _data[3:]
+	var dfs func([]byte) *HuffmanNode
+	dfs = func(data []byte) *HuffmanNode {
+		n := new(HuffmanNode)
+		n.symbol = '*'
+		d := data[0]
 		switch d {
 		// left node
 		case 0:
+			n.left = dfs(data[1:])
 			break
+		// right node
 		case 1:
+			n.right = dfs(data[1:])
 			break
+		case NULL:
+			return nil
+		// must be a symbolic-leaf
 		default:
-			return
+			n.symbol = rune(d)
 		}
+		return n
 	}
-	return n
+	return dfs(_data)
 }
