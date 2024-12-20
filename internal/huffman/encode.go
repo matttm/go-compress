@@ -30,19 +30,8 @@ func FromDecodedText(s string) *HuffmanCodec {
 	encoder.encoded = bytes
 	//	fmt.Println(encoder.encodingTable)
 	//	fmt.Printf("%08b\n", bytes)
-	serialized := serializeTree(encoder.tree)
-	fmt.Print(encoder.encodingTable)
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Print(serialized)
-	fmt.Println("")
-	fmt.Println("")
-	encoder.tree = deserializeTree(serialized)
-	sb.Reset()
-	encoder.encodingTable = make(map[rune]string)
-	createCodeTable(encoder.tree, encoder.encodingTable, sb)
-	fmt.Print(encoder.encodingTable)
-	fmt.Println("")
+	// TODO: attach serialized to encoded
+	//  serialized := serializeTree(encoder.tree)
 	return encoder
 }
 func (c *HuffmanCodec) constructFrequencyMap(s string) {

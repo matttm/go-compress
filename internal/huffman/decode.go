@@ -2,7 +2,6 @@ package huffman
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 
 	bitreader "github.com/matttm/go-compress/internal/bit-reader"
@@ -42,7 +41,6 @@ func deserializeTree(_data []byte) *HuffmanNode {
 	// data[0:2] is magic
 	index := 0
 	data := _data[2:]
-	fmt.Println(data)
 	var dfs func() *HuffmanNode
 	dfs = func() *HuffmanNode {
 		if index >= len(data) {
@@ -50,26 +48,16 @@ func deserializeTree(_data []byte) *HuffmanNode {
 		}
 		n := new(HuffmanNode)
 		d := data[index]
+		index += 1
 		if d == NULL {
-			//return nil
+			return nil
 		}
 		n.symbol = rune(d)
-		index += 1
 		n.left = dfs()
 		n.right = dfs()
 		return n
 	}
 	n := dfs()
-	var printTree func(node *HuffmanNode)
-	printTree = func(node *HuffmanNode) {
-		if node == nil {
-			return
-		}
-		fmt.Println(node.symbol)
-		printTree(node.left)
-		printTree(node.right)
-
-	}
-	printTree(n)
+	// printTree(n)
 	return n
 }

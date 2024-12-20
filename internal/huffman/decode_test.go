@@ -1,6 +1,7 @@
 package huffman
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,9 +29,15 @@ type deserialize_testcase struct {
 //		}
 //	}
 func Test_ShouldDeserialize(t *testing.T) {
-	var compareTrees func(t *testing.T, a, b *HuffmanNode)
-	compareTrees = func(t *testing.T, a, b *HuffmanNode) {
-		assert.Equal(t, serializeTree(_t.createTree()), _input, "deserialize basic tree")
+	var compareTrees func(t *testing.T, a, b *HuffmanNode) bool
+	compareTrees = func(t *testing.T, a, b *HuffmanNode) bool {
+		if a == nil && b == nil {
+			return true
+		}
+		if a == nil || b == nil {
+			return false
+		}
+		return a.symbol == b.symbol && compareTrees(t, a.left, b.left) && compareTrees(t, a.right, b.right)
 	}
 	tests := []deserialize_testcase{
 		{
@@ -48,6 +55,12 @@ func Test_ShouldDeserialize(t *testing.T) {
 	for _, _t := range tests {
 		_input := MAGIC_NUMBER
 		_input = append(_input, _t.input...)
-		compareTrees(t, _t.expectedTree, deserializeTree(_t.input))
+		treeA := _t.expectedTree
+		treeB := deserializeTree(_input)
+		fmt.Println("tree  -------------")
+		printTree(treeA)
+		fmt.Println("tree  -------------")
+		printTree(treeB)
+		assert.Equal(t, compareTrees(t, treeA, treeB), true, "comparing trees")
 	}
 }
