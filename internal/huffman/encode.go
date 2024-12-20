@@ -129,15 +129,12 @@ func serializeTree(n *HuffmanNode) []byte {
 			*_b = append(*_b, NULL)
 			return
 		}
-		if _n.symbol != '*' {
-			*_b = append(*_b, byte(_n.symbol))
-			*count += 1
-		} else {
-			*_b = append(*_b, 0)
-			serialize(_n.left, _b, count)
-			*_b = append(*_b, 1)
-			serialize(_n.right, _b, count)
-		}
+		*_b = append(*_b, byte(_n.symbol))
+		*count += 1
+		//*_b = append(*_b, 0)
+		serialize(_n.left, _b, count)
+		//*_b = append(*_b, 1)
+		serialize(_n.right, _b, count)
 	}
 	serialize(n, &b, &nodeCount)
 	encodedData := []byte{}
