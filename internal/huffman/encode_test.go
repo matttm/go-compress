@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type huffman_testcase struct {
+type encode_testcase struct {
 	input    string
 	expected []byte
 }
@@ -16,7 +16,7 @@ type serialize_testcase struct {
 }
 
 func Test_ShouldEncode(t *testing.T) {
-	tests := []huffman_testcase{
+	tests := []encode_testcase{
 		{
 			input:    "aabba",
 			expected: []byte{0b11001000},
