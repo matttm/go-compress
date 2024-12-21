@@ -1,7 +1,6 @@
 package huffman
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,15 +19,14 @@ func Test_ShouldDecode(t *testing.T) {
 	tests := []decode_testcase{
 		{
 			expected: "aabba",
-			input:    []byte{'*', 'a', NULL, NULL, 'b', NULL, NULL, 0b11001000},
+			// TODO: devise a way to indicate how many bits to ignore (i.e. gotta to ignore the laast 3 bits in byte below)
+			input: []byte{'*', 'a', NULL, NULL, 'b', NULL, NULL, 0b11001000},
 		},
 	}
 	for _, _t := range tests {
 		_input := MAGIC_NUMBER
 		_input = append(_input, _t.input...)
 		c := FromEncodedText(string(_input))
-		fmt.Println(c.encodingTable)
-		fmt.Println(c.decodingTable)
 		assert.Equal(t, c.decoded, _t.expected, "decode")
 	}
 }

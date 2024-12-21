@@ -30,12 +30,20 @@ func (bw *BitWriter) WriteBit(set bool) {
 
 }
 
-func (bw *BitWriter) YieldSlice() []byte {
+// yields its internal buffer to a slice and a integer
+//
+//	indicating how many bits were used to fill the last byte
+//
+// NOTE: these remaining bit count should be stored with encoded data,
+//
+//	so these extera bits can be ignored during deserialization
+func (bw *BitWriter) YieldSlice() ([]byte, uint8) {
+	var remaining uint8 = 0
 	if bw.bitCount > 0 {
-		remaining := 8 - bw.bitCount
+		remaining = 8 - bw.bitCount
 		for range remaining {
 			bw.WriteBit(false)
 		}
 	}
-	return bw.storage
+	return bw.storage, remaining
 }

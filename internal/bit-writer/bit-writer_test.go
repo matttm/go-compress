@@ -32,7 +32,7 @@ func Test_ShouldEncode(t *testing.T) {
 		for _, _bool := range _t.input {
 			bw.WriteBit(_bool)
 		}
-		yield := bw.YieldSlice()
+		yield, _ := bw.YieldSlice()
 		assert.Equal(t, len(yield), 1, "")
 		assert.Equal(t, yield[0], _t.expected[0], "should pad to byte boundary")
 	}

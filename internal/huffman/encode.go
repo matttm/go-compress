@@ -17,7 +17,8 @@ func (c *HuffmanCodec) encode(s string) []byte {
 			bw.WriteBit(c == '1')
 		}
 	}
-	return bw.YieldSlice()
+	b, _ := bw.YieldSlice()
+	return b
 }
 
 func FromDecodedText(s string) *HuffmanCodec {
