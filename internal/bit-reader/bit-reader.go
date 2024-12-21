@@ -21,14 +21,13 @@ func (br *BitReader) ReadBit() (bool, error) {
 	if br.IsEOF() {
 		return false, fmt.Errorf("Error: Index out-of-bounds")
 	} else {
+		br.current = br.encoded[br.index]
 		if br.bitCount == 8 {
 			br.bitCount = 0
 			br.index += 1
-			br.current = br.encoded[br.index]
 			return br.ReadBit()
 		} else {
 			_set := br.current >> (7 - br.bitCount)
-			fmt.Printf("%08b, %08b\n", _set, br.current)
 			set := _set & 1
 			br.bitCount += 1
 			return set == 1, nil
@@ -37,5 +36,5 @@ func (br *BitReader) ReadBit() (bool, error) {
 }
 
 func (br *BitReader) IsEOF() bool {
-	return br.index == uint64(len(br.encoded))
+	return br.index >= uint64(len(br.encoded))
 }

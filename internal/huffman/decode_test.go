@@ -16,18 +16,22 @@ type deserialize_testcase struct {
 	input        []byte
 }
 
-//	func Test_ShouldDecode(t *testing.T) {
-//		tests := []decode_testcase{
-//			{
-//				expected: "aabba",
-//				input:    []byte{0b11001000},
-//			},
-//		}
-//		for _, _t := range tests {
-//			c := FromEncodedText(_t.input)
-//			assert.ElementsMatch(t, c.encoded, _t.expected, "decode")
-//		}
-//	}
+func Test_ShouldDecode(t *testing.T) {
+	tests := []decode_testcase{
+		{
+			expected: "aabba",
+			input:    []byte{'*', 'a', NULL, NULL, 'b', NULL, NULL, 0b11001000},
+		},
+	}
+	for _, _t := range tests {
+		_input := MAGIC_NUMBER
+		_input = append(_input, _t.input...)
+		c := FromEncodedText(string(_input))
+		fmt.Println(c.encodingTable)
+		fmt.Println(c.decodingTable)
+		assert.Equal(t, c.decoded, _t.expected, "decode")
+	}
+}
 func Test_ShouldDeserialize(t *testing.T) {
 	var compareTrees func(t *testing.T, a, b *HuffmanNode) bool
 	compareTrees = func(t *testing.T, a, b *HuffmanNode) bool {
@@ -56,11 +60,7 @@ func Test_ShouldDeserialize(t *testing.T) {
 		_input := MAGIC_NUMBER
 		_input = append(_input, _t.input...)
 		treeA := _t.expectedTree
-		treeB := deserializeTree(_input)
-		fmt.Println("tree  -------------")
-		printTree(treeA)
-		fmt.Println("tree  -------------")
-		printTree(treeB)
-		assert.Equal(t, compareTrees(t, treeA, treeB), true, "comparing trees")
+		treeB, _ := deserializeTree(_input)
+		assert.Equal(t, true, compareTrees(t, treeA, treeB), "comparing trees")
 	}
 }

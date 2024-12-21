@@ -21,11 +21,11 @@ func (c *HuffmanCodec) encode(s string) []byte {
 }
 
 func FromDecodedText(s string) *HuffmanCodec {
-	encoder := new(HuffmanCodec)
+	encoder := New()
 	encoder.constructFrequencyMap(s)
 	encoder.createTree()
 	var sb strings.Builder
-	createCodeTable(encoder.tree, encoder.encodingTable, sb)
+	encoder.createCodeTable(encoder.tree, sb)
 	bytes := encoder.encode(s)
 	encoder.encoded = bytes
 	//	fmt.Println(encoder.encodingTable)
@@ -36,7 +36,6 @@ func FromDecodedText(s string) *HuffmanCodec {
 }
 func (c *HuffmanCodec) constructFrequencyMap(s string) {
 	c.frequencyTable = make(map[rune]int)
-	c.encodingTable = make(map[rune]string)
 	for _, r := range s {
 		prv := c.frequencyTable[r]
 		c.frequencyTable[r] = prv + 1
@@ -86,27 +85,6 @@ func (c *HuffmanCodec) createTree() {
 		c.tree = n.Node
 	} else {
 		panic("Huffman map is empty")
-	}
-}
-func createCodeTable(node *HuffmanNode, m map[rune]string, sb strings.Builder) {
-	if node == nil {
-		return
-	}
-	if node.symbol != '*' {
-		m[node.symbol] = sb.String()
-		return
-	}
-	if node.left != nil {
-		var left strings.Builder
-		left.WriteString(sb.String())
-		left.WriteRune('0')
-		createCodeTable(node.left, m, left)
-	}
-	if node.right != nil {
-		var right strings.Builder
-		right.WriteString(sb.String())
-		right.WriteRune('1')
-		createCodeTable(node.right, m, right)
 	}
 }
 func serializeTree(n *HuffmanNode) []byte {
