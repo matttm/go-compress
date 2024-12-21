@@ -38,3 +38,12 @@ func (br *BitReader) ReadBit() (bool, error) {
 func (br *BitReader) IsEOF() bool {
 	return br.index >= uint64(len(br.encoded))
 }
+func (br *BitReader) IsLastByte() bool {
+	return br.index == uint64(len(br.encoded)-1)
+}
+
+// getBitPosition
+// returns position of next bit to be read in current byte
+func (br *BitReader) GetBitPosition() uint8 {
+	return br.bitCount
+}

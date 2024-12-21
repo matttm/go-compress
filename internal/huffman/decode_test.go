@@ -19,8 +19,7 @@ func Test_ShouldDecode(t *testing.T) {
 	tests := []decode_testcase{
 		{
 			expected: "aabba",
-			// TODO: devise a way to indicate how many bits to ignore (i.e. gotta to ignore the laast 3 bits in byte below)
-			input: []byte{'*', 'a', NULL, NULL, 'b', NULL, NULL, 0b11001000},
+			input:    []byte{0x03, '*', 'a', NULL, NULL, 'b', NULL, NULL, 0b00110000},
 		},
 	}
 	for _, _t := range tests {
@@ -55,10 +54,8 @@ func Test_ShouldDeserialize(t *testing.T) {
 		},
 	}
 	for _, _t := range tests {
-		_input := MAGIC_NUMBER
-		_input = append(_input, _t.input...)
 		treeA := _t.expectedTree
-		treeB, _ := deserializeTree(_input)
+		treeB, _ := deserializeTree(_t.input)
 		assert.Equal(t, true, compareTrees(t, treeA, treeB), "comparing trees")
 	}
 }

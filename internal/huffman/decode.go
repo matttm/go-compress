@@ -1,7 +1,6 @@
 package huffman
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 
@@ -11,21 +10,25 @@ import (
 func FromEncodedText(s string) *HuffmanCodec {
 	c := New()
 	b := []byte(s)
-	tree, index := deserializeTree(b)
+	_, extra, data := unpackageData(b)
+	tree, index := deserializeTree(data)
 	c.tree = tree
-	c.encoded = b[index:]
+	c.encoded = data[index:]
 	var sb strings.Builder
 	c.createCodeTable(c.tree, sb)
-	c.decode()
+	c.decoded = c.decode(extra)
 	return c
 }
 
-func (c *HuffmanCodec) decode() {
+func (c *HuffmanCodec) decode(extra uint8) string {
 	var codeBldr strings.Builder
 	br := bitreader.FromSlice(c.encoded)
 	var decodedBldr strings.Builder
 	// while br is not at eof
 	for !br.IsEOF() {
+		if br.IsLastByte() && 8-br.GetBitPosition() == extra {
+			break
+		}
 		_bit, err := br.ReadBit()
 		if err != nil {
 			break
@@ -46,21 +49,14 @@ func (c *HuffmanCodec) decode() {
 			codeBldr.Reset()
 		}
 	}
-	c.decoded = decodedBldr.String()
+	return decodedBldr.String()
 }
-func deserializeTree(_data []byte) (*HuffmanNode, int) {
-	if !bytes.HasPrefix(_data, MAGIC_NUMBER) {
-	}
+func deserializeTree(data []byte) (*HuffmanNode, int) {
 	// count := data[0]
 	//
-	// data[0:2] is magic
 	index := 0
-	data := _data[2:]
 	var dfs func() *HuffmanNode
 	dfs = func() *HuffmanNode {
-		if index >= len(data) {
-			return nil
-		}
 		n := new(HuffmanNode)
 		d := data[index]
 		index += 1
@@ -74,5 +70,10 @@ func deserializeTree(_data []byte) (*HuffmanNode, int) {
 	}
 	n := dfs()
 	// printTree(n)
-	return n, index + 2 // add 2 to skip magic
+	return n, index
+}
+func unpackageData(b []byte) ([]byte, uint8, []byte) {
+	header := b[:2]
+	extra := uint8(b[2])
+	return header, extra, b[3:]
 }

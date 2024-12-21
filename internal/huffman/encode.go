@@ -8,7 +8,7 @@ import (
 	bitwriter "github.com/matttm/go-compress/internal/bit-writer"
 )
 
-func (c *HuffmanCodec) encode(s string) []byte {
+func (c *HuffmanCodec) encode(s string) ([]byte, uint8) {
 	encoded := []byte{}
 	bw := bitwriter.WithSlice(encoded)
 	for _, r := range s {
@@ -17,8 +17,7 @@ func (c *HuffmanCodec) encode(s string) []byte {
 			bw.WriteBit(c == '1')
 		}
 	}
-	b, _ := bw.YieldSlice()
-	return b
+	return bw.YieldSlice()
 }
 
 func FromDecodedText(s string) *HuffmanCodec {
@@ -27,12 +26,9 @@ func FromDecodedText(s string) *HuffmanCodec {
 	encoder.createTree()
 	var sb strings.Builder
 	encoder.createCodeTable(encoder.tree, sb)
-	bytes := encoder.encode(s)
-	encoder.encoded = bytes
-	//	fmt.Println(encoder.encodingTable)
-	//	fmt.Printf("%08b\n", bytes)
-	// TODO: attach serialized to encoded
-	//  serialized := serializeTree(encoder.tree)
+	bytes, extra := encoder.encode(s)
+	serializedTree := serializeTree(encoder.tree)
+	encoder.encoded = packageData(extra, serializedTree, bytes)
 	return encoder
 }
 func (c *HuffmanCodec) constructFrequencyMap(s string) {
@@ -89,7 +85,7 @@ func (c *HuffmanCodec) createTree() {
 	}
 }
 func serializeTree(n *HuffmanNode) []byte {
-	b := []byte{}
+	serializedTree := []byte{}
 	nodeCount := 0
 	var serialize func(*HuffmanNode, *[]byte, *int)
 	serialize = func(_n *HuffmanNode, _b *[]byte, count *int) {
@@ -104,9 +100,14 @@ func serializeTree(n *HuffmanNode) []byte {
 		//*_b = append(*_b, 1)
 		serialize(_n.right, _b, count)
 	}
-	serialize(n, &b, &nodeCount)
-	encodedData := []byte{}
-	encodedData = append(encodedData, MAGIC_NUMBER...)
-	encodedData = append(encodedData, b...)
-	return encodedData
+	serialize(n, &serializedTree, &nodeCount)
+	return serializedTree
+}
+func packageData(extraBits uint8, serializedTree, encodedData []byte) []byte {
+	packagedData := []byte{}
+	packagedData = append(packagedData, MAGIC_NUMBER...)
+	packagedData = append(packagedData, extraBits)
+	packagedData = append(packagedData, serializedTree...)
+	packagedData = append(packagedData, encodedData...)
+	return packagedData
 }
