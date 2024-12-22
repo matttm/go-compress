@@ -19,7 +19,20 @@ so if you want to encode a file, use some combo of the `cat` command and file re
 ```
 cat decoded.file | ./go-compress encode > encoded.file
 ```
+## Design
 
+The following is a quick diagra, of the encoded data
+```
++-------------------------------------------------+
+|                  Header (2 Bytes)               | 
++-------------------------------------------------+
+|              Extraneous Bits (1 Byte)           | 
++-------------------------------------------------+
+|              Serialized Tree (k Bytes)          | 
++-------------------------------------------------+
+|                 Encoded Data                    | 
++-------------------------------------------------+ 
+```
 ## Authors
 
 -   Matt Maloney : matttm
