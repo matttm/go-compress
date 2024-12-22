@@ -17,6 +17,7 @@ func FromEncodedText(s string) *HuffmanCodec {
 	var sb strings.Builder
 	c.createCodeTable(c.tree, sb)
 	c.decoded = c.decode(extra)
+	fmt.Println(c.decoded)
 	return c
 }
 

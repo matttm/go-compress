@@ -8,6 +8,18 @@ import (
 	bitwriter "github.com/matttm/go-compress/internal/bit-writer"
 )
 
+func FromDecodedText(s string) *HuffmanCodec {
+	encoder := New()
+	encoder.constructFrequencyMap(s)
+	encoder.createTree()
+	var sb strings.Builder
+	encoder.createCodeTable(encoder.tree, sb)
+	bytes, extra := encoder.encode(s)
+	serializedTree := serializeTree(encoder.tree)
+	encoder.encoded = packageData(extra, serializedTree, bytes)
+	fmt.Printf("%s\n", encoder.encoded)
+	return encoder
+}
 func (c *HuffmanCodec) encode(s string) ([]byte, uint8) {
 	encoded := []byte{}
 	bw := bitwriter.WithSlice(encoded)
@@ -18,18 +30,6 @@ func (c *HuffmanCodec) encode(s string) ([]byte, uint8) {
 		}
 	}
 	return bw.YieldSlice()
-}
-
-func FromDecodedText(s string) *HuffmanCodec {
-	encoder := New()
-	encoder.constructFrequencyMap(s)
-	encoder.createTree()
-	var sb strings.Builder
-	encoder.createCodeTable(encoder.tree, sb)
-	bytes, extra := encoder.encode(s)
-	serializedTree := serializeTree(encoder.tree)
-	encoder.encoded = packageData(extra, serializedTree, bytes)
-	return encoder
 }
 func (c *HuffmanCodec) constructFrequencyMap(s string) {
 	c.frequencyTable = make(map[rune]int)
@@ -47,7 +47,7 @@ func (c *HuffmanCodec) createTree() {
 	for _, v := range c.frequencyTable {
 		sum += v
 	}
-	fmt.Println(sum)
+	// fmt.Println(sum)
 	for k, v := range c.frequencyTable {
 		pq.Push(
 			&Item{
