@@ -21,7 +21,7 @@ cat decoded.file | ./go-compress encode > encoded.file
 ```
 ## Design
 
-The following is a quick diagra, of the encoded data
+The following is a quick diagram, of the encoded data
 ```
 +-------------------------------------------------+
 |                  Header (2 Bytes)               | 
