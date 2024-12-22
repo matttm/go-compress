@@ -5,7 +5,7 @@
 This codec written in go, currently encodes/decodes using the Huffman algorithm.
 
 ## Getting Started
-There are two commands `encode` and `decode`, for which I normally pipe in input. This might look the following:
+There are two commands `encode` and `decode`, for which I normally pipe in input. This might look like the following:
 ```
 ❯ echo "aabba" | ./go-compress encode
 *b@@a@@
