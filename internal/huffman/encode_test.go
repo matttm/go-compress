@@ -19,20 +19,22 @@ func Test_ShouldEncode(t *testing.T) {
 	tests := []encode_testcase{
 		{
 			input:    "aabba",
-			expected: []byte{0b11001000},
+			expected: []byte{0x03, '*', 'a', NULL, NULL, 'b', NULL, NULL, 0b11001000},
 		},
 		{
 			input:    "aabbaaabb",
-			expected: []byte{0b11001110, 0b00000000},
+			expected: []byte{0x07, '*', 'a', NULL, NULL, 'b', NULL, NULL, 0b11001110, 0b00000000},
 		},
 		{
 			input:    "aabbaaaba",
-			expected: []byte{0b11001110, 0b10000000},
+			expected: []byte{0x07, '*', 'a', NULL, NULL, 'b', NULL, NULL, 0b11001110, 0b10000000},
 		},
 	}
 	for _, _t := range tests {
+		_expected := MAGIC_NUMBER
+		_expected = append(_expected, _t.expected...)
 		c := FromDecodedText(_t.input)
-		assert.ElementsMatch(t, c.encoded, _t.expected, "decode")
+		assert.ElementsMatch(t, c.encoded, _expected, "decode")
 	}
 }
 func Test_ShouldSerialize(t *testing.T) {
@@ -64,8 +66,6 @@ func Test_ShouldSerialize(t *testing.T) {
 		},
 	}
 	for _, _t := range tests {
-		_expected := MAGIC_NUMBER
-		_expected = append(_expected, _t.expected...)
-		assert.Equal(t, serializeTree(_t.createTree()), _expected, "serialize basic tree")
+		assert.Equal(t, serializeTree(_t.createTree()), _t.expected, "serialize basic tree")
 	}
 }
