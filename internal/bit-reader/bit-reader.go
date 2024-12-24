@@ -9,6 +9,8 @@ type BitReader struct {
 	bitCount uint8 // the bit position being examined of byte pointed to by index
 }
 
+// Function FromSlice
+// create a BitReader that will read oprivided slice
 func FromSlice(s []byte) *BitReader {
 	br := new(BitReader)
 	br.encoded = s
@@ -17,6 +19,9 @@ func FromSlice(s []byte) *BitReader {
 	br.bitCount = 0 // todo: check if on big-endian or not
 	return br
 }
+
+// Function ReadBit
+// will read a single bit
 func (br *BitReader) ReadBit() (bool, error) {
 	if br.IsEOF() {
 		return false, fmt.Errorf("Error: Index out-of-bounds")
@@ -35,9 +40,14 @@ func (br *BitReader) ReadBit() (bool, error) {
 	}
 }
 
+// Function IsEOF
+// Determines if there are more bits to read
 func (br *BitReader) IsEOF() bool {
 	return br.index >= uint64(len(br.encoded))
 }
+
+// Function IsLastByte
+// Determines if the next bit to be read is in the last byte
 func (br *BitReader) IsLastByte() bool {
 	return br.index == uint64(len(br.encoded)-1)
 }

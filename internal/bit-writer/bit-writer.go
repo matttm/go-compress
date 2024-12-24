@@ -6,6 +6,8 @@ type BitWriter struct {
 	bitCount uint8
 }
 
+// Function WithSlice
+// createss a writer that will write to provided buffer
 func WithSlice(b []byte) *BitWriter {
 	bw := new(BitWriter)
 	bw.storage = b
@@ -14,6 +16,10 @@ func WithSlice(b []byte) *BitWriter {
 	return bw
 }
 
+// Function WriteBit
+// Writes a single bit to position pointed to by GetCurrentPosition
+//
+// Note: will allocate new byte when needed
 func (bw *BitWriter) WriteBit(set bool) {
 	// the idea is well modify the lsb, then shift it left
 	if set {
@@ -33,8 +39,6 @@ func (bw *BitWriter) WriteBit(set bool) {
 // yields its internal buffer to a slice and a integer
 //
 //	indicating how many bits were used to fill the last byte
-//
-// NOTE: these remaining bit count should be stored with encoded data,
 //
 //	so these extera bits can be ignored during deserialization
 func (bw *BitWriter) YieldSlice() ([]byte, uint8) {

@@ -7,6 +7,9 @@ import (
 	bitreader "github.com/matttm/go-compress/internal/bit-reader"
 )
 
+// Function FromEncodedText
+//
+//	reads encoded text and output the decoded text to stdin
 func FromEncodedText(s string) *HuffmanCodec {
 	c := New()
 	b := []byte(s)
@@ -21,6 +24,9 @@ func FromEncodedText(s string) *HuffmanCodec {
 	return c
 }
 
+// Function decode
+//
+//	decodes the internal field encoded using the field tree of *HuffmanNode
 func (c *HuffmanCodec) decode(extra uint8) string {
 	var codeBldr strings.Builder
 	br := bitreader.FromSlice(c.encoded)
@@ -52,6 +58,13 @@ func (c *HuffmanCodec) decode(extra uint8) string {
 	}
 	return decodedBldr.String()
 }
+
+// Function deserializeTree
+//
+//	takes binary data and creates a huffman tree from the beginning of it
+//
+//	the returned int is the index following the final serialized node, MEANING,
+//	it dictates where the ACTUAL data to be decoded starts
 func deserializeTree(data []byte) (*HuffmanNode, int) {
 	// count := data[0]
 	//
@@ -70,7 +83,6 @@ func deserializeTree(data []byte) (*HuffmanNode, int) {
 		return n
 	}
 	n := dfs()
-	// printTree(n)
 	return n, index
 }
 func unpackageData(b []byte) ([]byte, uint8, []byte) {

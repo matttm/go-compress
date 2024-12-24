@@ -10,7 +10,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// program for encoding/decoding data
+//
 // Usage: cat sample | ./gocompress encode
+
+// function pipes all stdin as input to go-compress
 func PipeStdInToCommand(fn func(string) *huffman.HuffmanCodec) {
 	scanner := bufio.NewScanner(os.Stdin)
 	var sb strings.Builder

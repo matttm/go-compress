@@ -8,6 +8,9 @@ import (
 	bitwriter "github.com/matttm/go-compress/internal/bit-writer"
 )
 
+// Function FromDecodedText
+//
+//	converts encoded data into decodec data
 func FromDecodedText(s string) *HuffmanCodec {
 	encoder := New()
 	encoder.constructFrequencyMap(s)
@@ -20,6 +23,10 @@ func FromDecodedText(s string) *HuffmanCodec {
 	fmt.Printf("%s\n", encoder.encoded)
 	return encoder
 }
+
+// Function encode
+//
+//	uses field tree of HuffmanNode to encode the data
 func (c *HuffmanCodec) encode(s string) ([]byte, uint8) {
 	encoded := []byte{}
 	bw := bitwriter.WithSlice(encoded)
