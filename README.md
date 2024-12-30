@@ -31,8 +31,16 @@ The following is a quick diagram, of the encoded data
 |              Serialized Tree (k Bytes)          | 
 +-------------------------------------------------+
 |                 Encoded Data                    | 
-+-------------------------------------------------+ 
++-------------------------------------------------+
 ```
+The header is simply two bytez indicating the following is encoded data.
+
+The following byte is an integer in the range from zero to seven, indicating how many bits should be ignored in the last byte of data.
+
+The following bytes are of a variable amount. However though the length is unknown, since null values are presented after leaves, the boundary can be determined.
+
+The rest of the bytes are encoded data.
+
 ## Authors
 
 -   Matt Maloney : matttm
