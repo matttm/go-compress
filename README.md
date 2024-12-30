@@ -33,7 +33,7 @@ The following is a quick diagram, of the encoded data
 |                 Encoded Data                    | 
 +-------------------------------------------------+
 ```
-The header is simply two bytez indicating the following is encoded data.
+The header is simply two bytes indicating the following is encoded data.
 
 The following byte is an integer in the range from zero to seven, indicating how many bits should be ignored in the last byte of data.
 
