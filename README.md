@@ -41,6 +41,8 @@ The following bytes are of a variable amount. However though the length is unkno
 
 The rest of the bytes are encoded data.
 
+For a better understanding of the extraneous bits byte, if the byte is `0x03`, then of the last byte of encoded data, the last theee bits are only for byte alignment and to ensure the decode does not determine these to be a character in the plaintext.
+
 ## Authors
 
 -   Matt Maloney : matttm
